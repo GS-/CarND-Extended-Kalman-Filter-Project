@@ -36,6 +36,11 @@ FusionEKF::FusionEKF() {
     * Finish initializing the FusionEKF.
     * Set the process and measurement noises
   */
+
+  //measurement matrix
+  H_laser_ << 1, 0, 0, 0,
+              0, 1, 0, 0;
+
   // The initial transition matrix F_
   ekf_.F_ = MatrixXd(4, 4);
   ekf_.F_ << 1, 0, 1, 0,
@@ -116,9 +121,14 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   float dt_3 = dt_2 * dt;
   float dt_4 = dt_3 * dt;
 
-    //Modify the F matrix so that the time is integrated
-  ekf_.F_(0, 2) = dt;
-  ekf_.F_(1, 3) = dt;
+  //Modify the F matrix so that the time is integrated
+  // ekf_.F_(0, 2) = dt;
+  // ekf_.F_(1, 3) = dt;
+
+  ekf_.F_ << 1, 0, dt, 0,
+             0, 1, 0, dt,
+             0, 0, 1, 0,
+             0, 0, 0, 1;
 
 
   //set the acceleration noise components
