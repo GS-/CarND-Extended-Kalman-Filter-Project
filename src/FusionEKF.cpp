@@ -106,7 +106,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       // ekf_.x_(3) = vy;
 
       ekf_.x_ << px, py, vx, vy;
-      
+
       // cout << "RADAR - x_ = " << ekf_.x_ << endl;
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
@@ -119,7 +119,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     }
 
     // done initializing, no need to predict or update
-    previous_timestamp_ = measurement_pack.timestamp_;
     is_initialized_ = true;
     return;
   }
@@ -151,7 +150,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   //Modify the F matrix so that the time is integrated
   // ekf_.F_(0, 2) = dt;
   // ekf_.F_(1, 3) = dt;
-  
+
   // algorithm should use the first measurements to initialize the state vectors and covariance matrices.
 
   ekf_.F_ << 1, 0, dt, 0,
