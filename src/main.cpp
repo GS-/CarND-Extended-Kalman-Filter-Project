@@ -66,7 +66,7 @@ int main()
     	  string sensor_type;
     	  iss >> sensor_type;
           
-          std::cout << "NNNNNNNNNNN" << std::endl;
+          // std::cout << "NNNNNNNNNNN" << std::endl;
           
     	  if (sensor_type.compare("L") == 0) {
       	  		meas_package.sensor_type_ = MeasurementPackage::LASER;
@@ -135,7 +135,7 @@ int main()
           gJson["4_vy"] = vy_gt;
           
           auto gmsg = "GGG" + gJson.dump();
-          std::cout << gmsg << std::endl;
+          // std::cout << gmsg << std::endl;
           
           json eJson;
           eJson["1_x"] = p_x;
@@ -143,8 +143,8 @@ int main()
           eJson["3_vx"] = v1;
           eJson["4_vy"] = v2;
           
-	  auto emsg = "EEE" + eJson.dump();
-          std::cout << emsg << std::endl;
+          auto emsg = "EEE" + eJson.dump();
+          // std::cout << emsg << std::endl;
           
           json rJson;
           rJson["1_x"] =  RMSE(0);
@@ -153,7 +153,7 @@ int main()
           rJson["4_vy"] = RMSE(3);
           
           auto rmsg = "RRR" + rJson.dump();
-          std::cout << rmsg << std::endl;
+          // std::cout << rmsg << std::endl;
           json msgJson;
           msgJson["estimate_x"] = p_x;
           msgJson["estimate_y"] = p_y;

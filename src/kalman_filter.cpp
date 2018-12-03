@@ -1,7 +1,10 @@
 #include "kalman_filter.h"
+#include <iostream>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+
+using namespace std;
 
 // Please note that the Eigen library does not initialize
 // VectorXd or MatrixXd objects with zeros upon creation.
@@ -35,6 +38,11 @@ void KalmanFilter::Update(const VectorXd &z) {
   TODO:
     * update the state by using Kalman Filter equations
   */
+    
+    // std::cout << "Laser X: " << x_ << std::endl;
+    // std::cout << "Laser Matrix H: " << H_ << std::endl;
+    // std::cout << "Laser Matrix R: " << R_ << std::endl;
+  
     VectorXd z_pred = H_ * x_;
     VectorXd y = z - z_pred;
     MatrixXd Ht = H_.transpose();
@@ -48,6 +56,10 @@ void KalmanFilter::Update(const VectorXd &z) {
     long x_size = x_.size();
     MatrixXd I = MatrixXd::Identity(x_size, x_size);
     P_ = (I - K * H_) * P_;
+  
+    // std::cout << "Laser y: " <<  y  << std::endl;
+    // std::cout << "Laser New x_: " <<  x_  << std::endl;
+    // std::cout << "Laser New P_: " <<  P_  << std::endl;
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
@@ -55,11 +67,12 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   TODO:
     * update the state by using Extended Kalman Filter equations
   */
-  float px = x_[0];
-  float py = x_[1];
-  float vx = x_[2];
-  float vy = x_[3];
+  double px = x_[0];
+  double py = x_[1];
+  double vx = x_[2];
+  double vy = x_[3];
 
+  // cout << "px: " <<  px << " py: " <<  py  << " vx: " <<  vx << " vy: " <<  vy << endl;
   if (fabs(py) < 0.0001) {
     py = 0.0001;
   }
@@ -67,20 +80,28 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     px = 0.0001;
   }
 
-  float rho = sqrt(px*px + py*py);
+  double rho = sqrt(px*px + py*py);
   if(fabs(rho) < 0.0001){
     rho = 0.0001;
   }
 
-  float theta = atan2(py, px);
-  float pv = px*vx + py*vy;
-  float rho_dot = pv / rho;
+  double theta = atan2(py, px);
+  double tmp = px*vx + py*vy;
+  
+  if (fabs(tmp) < 0.0001) {
+    tmp = 0.0001;
+  }
+  double rho_dot = tmp / rho;
 
+  // std::cout << "rho: " <<  rho << " theta: " <<  theta  << " tmp: " <<  tmp << " rho_dot: " <<  rho_dot << std::endl;
+  
   VectorXd z_pred(3);
   z_pred << rho, theta, rho_dot;
 
   VectorXd y = z - z_pred;
-
+  // std::cout << "z: " <<  z << std::endl;
+  // std::cout << "z_pred: " <<  z_pred << std::endl;
+  
   // Make theta between -PI and PI
   while (y(1) > M_PI) {
      y(1) -= 2 * M_PI;
@@ -89,6 +110,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
      y(1) += 2 * M_PI;
   }
 
+  // std::cout << "Radar Matrix H: " << H_ << std::endl;
+  // std::cout << "Radar Matrix R: " << R_ << std::endl;
+  
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
@@ -100,4 +124,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
+  
+  // std::cout << "Radar New y: " <<  y  << std::endl;
+  // std::cout << "Radar New x_: " <<  x_  << std::endl;
+  // std::cout << "Radar New P_: " <<  P_  << std::endl;
+  
 }
